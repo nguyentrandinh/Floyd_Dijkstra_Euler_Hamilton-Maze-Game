@@ -7,5 +7,5 @@ For undirected graph-weighted matrix:
 5.Shortest distance,path by DIJKSTRA
 6.EULER cycle
 7.EULER path
-8.All HAMILTON cycle in graph
+8.MazeGame by Floyd and Dijkstra
 9.All HAMILTON path in graph
