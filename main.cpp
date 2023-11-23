@@ -14,13 +14,12 @@ int main(int argv, char** argc) {
     glutSpecialFunc(handleSpecialKeypress);
     glutSpecialUpFunc(handleSpecialKeyReleased);
     glutMouseFunc(mouseClick);
-    
     glutInitWindowSize(W2, H2); // Kích thước cửa sổ thứ hai
     glutInitWindowPosition(100, 100); // Vị trí cửa sổ thứ hai
     int secondWindow = glutCreateWindow("Ma tran");
     Init2();
     glutDisplayFunc(display2);
+    //int thirdwindow = glutCreateWindow("Ma tran");
     glutMainLoop();
-
 }
 

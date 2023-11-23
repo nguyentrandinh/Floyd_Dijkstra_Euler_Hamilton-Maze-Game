@@ -4,17 +4,8 @@ using namespace std;
 bool resultofhamilton = false;
 bool call = false;
 int num_rows=0;
-vector<vector<int>> pathofhamiltoncycle;
 vector<vector<int>> pathofhamiltonpath; // Lưu đường đi Hamilton
 vector<vector<int>> matrixofhamilton(nn, vector<int>(nn, 0));
-void printPath() {
-    
-    for (int i = 0; i < pathofhamiltoncycle.size(); i++) {
-
-        int p = pathofhamiltoncycle[i][0];
-        pathofhamiltoncycle[i].push_back(p);
-    }
-}
 void complete() {
 
     for (int i = 0; i < pathofhamiltonpath.size(); i++) {
@@ -64,47 +55,6 @@ bool hashamiltoncycle_ORE(vector<vector<int>> graph)
     }
     return false;
 }
-
-void hamCycleUtil( vector<int>path, int pos) {
-    if (pos == nn) {
-        if (matrixofhamilton[path[pos - 1]][path[0]] !=0) {
-            for (int i = 0; i < nn; i++)
-            {
-                path[i] += 1;
-            }
-            pathofhamiltoncycle.shrink_to_fit();
-           pathofhamiltoncycle.push_back(path);
-            
-        }
-        return;
-    }
-    for (int v = 0; v < nn; v++) {
-        if (matrixofhamilton[path[pos - 1]][v] !=0) {
-            bool isVisited = false;
-            for (int i = 0; i < pos; i++) {
-                if (path[i] == v) {
-                    isVisited = true;
-                    break;
-                }
-            }
-            if (!isVisited) {
-                path[pos] = v;
-                hamCycleUtil( path, pos + 1);
-                path[pos] = -1;
-            }
-        }
-    }
-}
-
-void findAllHamiltonCycles() {
-        vector<int>pathh(nn, -1);
-        for (int start = 0; start < nn; start++) {
-            pathh[0] = start;
-            hamCycleUtil(pathh, 1);
-            pathh[0] = -1;
-        }
-}
-
 void hamiltonPathUtil(vector<int>& path, int pos) {
     if (pos == nn) {
         pathofhamiltonpath.push_back(path);

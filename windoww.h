@@ -12,7 +12,9 @@
 #include"Undirected euler.h"
 #include"Undirected dijkstra.h"
 #include"Undirected hamilton.h"
+#include"Floyd-DijkstraMiniGame.h"
 using namespace std;
+//FloydMiniGame* mini = new FloydMiniGame(make_pair<int,int>(20,20));
 #pragma once
 //keyboard
 bool isUPKeyPressed;
@@ -57,6 +59,7 @@ int rowss = 0;
 void drawRectangle(float x1, float y1, float x2, float y2);
 void drawBOX(float x1, float y1, float x2, float y2, float color1, float color2, float color3, string n, bool centerText);
 void renderBitmapString(float x, float y, void* font, string string1);
+
 void Init();
 void reshape(int width, int height);
 void display2();
@@ -255,7 +258,7 @@ void basedisplay()
     drawBOX(-600, 20, -400, -10, 0, 0, 1, "DIJKSTRA", 1);//5
     drawBOX(-600, -30, -400, -60, 0, 0, 1, "Chu trinh EULER", 1);//6
     drawBOX(-600, -80, -400, -110, 0, 0, 1, "Duong di EULER", 1);//7
-    drawBOX(-600, -130, -400, -160, 0, 0, 1, "Chu trinh HAMLTON", 1);//8
+    drawBOX(-600, -130, -400, -160, 0, 0, 1, "MazeGame", 1);//8
     drawBOX(-600, -180, -400, -210, 0, 0, 1, "Duong di HAMLTON", 1);//9
     drawBOX(-600, -230, -400, -260, 0, 0, 1, "Dung chuong trinh", 1);//10
     drawBOX(-350, 220, 600, -260, 0, 0, 0, "", 0);//
@@ -459,7 +462,7 @@ void dischoice3()
                 renderBitmapString(x + 200, y, GLUT_BITMAP_HELVETICA_18, "0 (Khong di chuyen)");
             }
             else {
-                if (shortestDistances[startchoiceMinLength][endchoiceMinLength] == 0)
+                if (shortestDistances[startchoiceMinLength-1][endchoiceMinLength-1] == 0)
                 {
                     renderBitmapString(x + 200, y, GLUT_BITMAP_HELVETICA_18, "0 (Khong co duong di)");
                 }
@@ -541,7 +544,7 @@ void dischoice4() {
                 renderBitmapString(x + 180, y, GLUT_BITMAP_HELVETICA_18, "tai cho");
             }
             else {
-                if (Luuvetpath[startchoiceLuuvet][endchoiceLuuvet]==0) {
+                if (Luuvetpath[startchoiceLuuvet-1][endchoiceLuuvet-1]==0) {
                     renderBitmapString(x + 180, y, GLUT_BITMAP_HELVETICA_18, "Khong co duong di");
                 }
                 else
@@ -687,7 +690,7 @@ void dischoice7()
         resultofeuler = true;
         input = false;
     }
-    if(resultofeuler)
+    if (resultofeuler)
     {
         drawRectangle(-600, -80, -400, -110);
         int x = starttextX;
@@ -734,91 +737,27 @@ void dischoice7()
         {
             renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, "Khong co duong di euler trong do thi tren");
         }
-        
+
     }
-  
+
 }
+stack<pair<int, int>> test;
 void dischoice8()
 {
-    if (!InputData && !basemenu) {
-        renderBitmapString(starttextX, starttextY, GLUT_BITMAP_HELVETICA_18, "ERROR:Chua nhap ma tran");
-    }
-    drawRectangle(-600, -130, -400, -160);
-    int x = starttextX;
-    int y = starttextY;
-    if (input && InputData)
-    {
-        resultofhamilton = true;
-        input = false;
-    }
-    if (resultofhamilton)
+    //glClear(GL_COLOR_BUFFER_BIT);
+    
+    if (call == false)
     {
         
-        int x = starttextX;
-        int y = starttextY;
-        std::stringstream sizeInfo;
-        sizeInfo << "Ma tran " << nn << " x " << nn << " :";
-        renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, sizeInfo.str());
-        y -= 20;
-        // Hiển thị ma trận
-        for (int i = 0; i < nn; ++i) {
-            for (int j = 0; j < nn; ++j) {
-                // Định dạng chuỗi ký tự trước khi in ra
-                stringstream ss;
-                ss << setw(4) << setfill(' ') << dmatrix[i][j];
-                renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, ss.str());
-                x += 30; // Cập nhật x để di chuyển sang phần tử tiếp theo của hàng
-            }
-            x = starttextX; // Đặt lại x về giá trị ban đầu
-            y -= 20; // Di chuyển xuống hàng tiếp theo
-        }
+        Maze = InitWindoww();
         
-            if ( (hashamiltoncycle_DIRAC(matrixofhamilton)||hashamiltoncycle_ORE(matrixofhamilton)) && call == false)
-            {
-
-                findAllHamiltonCycles();
-                printPath();
-                call = true;
-            }
-            
-            if (!pathofhamiltoncycle.empty() && (hashamiltoncycle_DIRAC(matrixofhamilton) || hashamiltoncycle_ORE(matrixofhamilton)))
-            {
-               
-                string demo;
-                pathofhamiltoncycle.shrink_to_fit();
-                num_rows = pathofhamiltoncycle.size();
-                demo = "Co " + to_string(num_rows) + " chu trinh Hamilton trong do thi tren";
-                renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, demo);
-                int y1 = y;
-                rowss = (y + 260) / 20;
-                y -= 20;
-                int j = scroll;
-                string tmp;
-                for (j;j<pathofhamiltoncycle.size();j++)
-                {
-
-                    if (y > -260 && y <= y1)
-                    {
-                        tmp = to_string(j + 1) + ".";
-                        renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, tmp, 1, 1, 1);
-                        x += 50;
-                        for (int i = 0; i < pathofhamiltoncycle[j].size(); i++)
-                        {
-                            renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, to_string(pathofhamiltoncycle[j][i]), 1, 1, 1);
-                            x+= 30;
-                        }
-                        x = starttextX;
-                        y -= 20;
-                    }
-                    
-                }
-
-            }
-            else
-            {
-                renderBitmapString(x, y, GLUT_BITMAP_HELVETICA_18, "khong co chu trinh hamilton");
-            } 
+        MazeGame(Maze, StartGame, EndGame);
+        glutTimerFunc(0, drawWay, 0);
+        drawMap(siizze, Maze);
+        glutPostRedisplay();
     }
+    //drawMap(siizze, Maze);
+    
 }
 void dischoice9()
 {
@@ -940,15 +879,7 @@ void handleSpecialKeypress(int key, int x, int y)
                         choicetxt = (choicetxt == totaltxtfile) ? 1 : (choicetxt + 1);
 
                 }
-                if (isindis == 8)
-                {
-                    if (scroll <= pathofhamiltoncycle.size()&&scroll>=0)
-                    {
-                        scroll -= 1;
-                        if (scroll <= 0)
-                            scroll = 0;
-                    }
-                }
+               
                 if (isindis == 9)
                 {
                     if (scroll <= pathofhamiltonpath.size() && scroll >= 0)
@@ -969,16 +900,7 @@ void handleSpecialKeypress(int key, int x, int y)
                     if (choicetxt <= totaltxtfile && choicetxt >= 0)
                         choicetxt = (choicetxt == 1) ? totaltxtfile : (choicetxt - 1);
                 }
-                if (isindis == 8)
-                {
-                    if ( scroll >= 0 && scroll<= pathofhamiltoncycle.size()-rowss && rowss<pathofhamiltoncycle.size())
-                    {
-                        scroll += 1;
-                        if (scroll >= pathofhamiltoncycle.size())
-                            scroll = pathofhamiltoncycle.size();
-
-                    }
-                }
+                
                 if (isindis == 9)
                 {
                     if (scroll >= 0 && scroll <= pathofhamiltonpath.size() - rowss && rowss < pathofhamiltonpath.size())
@@ -1225,7 +1147,7 @@ void handleKeyReleased(unsigned char key, int x, int y)
         // Xử lý khi phím Enter được thả ra
         if (basemenu)
         {
-            switch (bchoice)
+            /*switch (bchoice)
             {
             case 1:
                 resultofmin = false; resultofeuler = false;
@@ -1239,11 +1161,13 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 isindis = 1;
                 bchoice = 1;
                 matrixofhamilton.clear();
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+                path.clear(); 
+                
+                pathofhamiltonpath.clear();
                 matrixx.clear();
                 matrixxx.clear();
                 b.clear();
-                transl = false;
+                
                 call=false;scroll=0;
                 break;
             case 2:
@@ -1256,8 +1180,9 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 basemenu = false;
                 checkinputsize = false;
                 isindis = 2;
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-                transl = false;
+                path.clear();
+                pathofhamiltonpath.clear();
+                
                 matrixofhamilton.clear();
                 matrixx.clear();
                 matrixxx.clear();
@@ -1275,11 +1200,13 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 basemenu = false;
                 isindis = 3;
                 bchoice = 3;
-                transl = false;
+                
                 input = true;
                 checkinputsize = false;
                 valuenxn = 0;
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+                path.clear(); 
+                
+                pathofhamiltonpath.clear();
                 matrixofhamilton.clear();
                 matrixx.clear();
                 call=false;scroll=0;
@@ -1296,8 +1223,8 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 isindis = 4;
                 bchoice = 4;
                 checkinputsize = false;
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-                transl = false;
+                path.clear();pathofhamiltonpath.clear();
+                
                 input = true;
                 valuenxn = 0;
                 matrixofhamilton.clear();
@@ -1317,8 +1244,8 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 isindis = 5;
                 checkinputsize = false;
                 bchoice = 5;
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-                transl = false;
+                path.clear();pathofhamiltonpath.clear();
+                
                 valuenxn = 0;
                 matrixofhamilton.clear();
                 matrixx.clear();
@@ -1338,9 +1265,9 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 checkinputsize = false;
                 bchoice = 6;
                 valuenxn = 0;
-                transl = false;
+                
                 matrixofhamilton.clear();
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+                path.clear();pathofhamiltonpath.clear();
                 b = dmatrix;
                 call=false;scroll=0;
                 matrixx.clear();
@@ -1358,8 +1285,8 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 checkinputsize = false;
                 bchoice = 7;
                 b = dmatrix;
-                transl = false;
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+                
+                path.clear();pathofhamiltonpath.clear();
                 valuenxn = 0;
                 matrixofhamilton.clear();
                 matrixx.clear();
@@ -1379,9 +1306,9 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 bchoice = 8;
                 valuenxn = 0;
                 matrixofhamilton = dmatrix;
-                transl = false;
+                
                 path.clear();
-                pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+                pathofhamiltonpath.clear();
                 matrixx.clear();
                 matrixxx.clear();
                 call=false;scroll=0;
@@ -1399,14 +1326,14 @@ void handleKeyReleased(unsigned char key, int x, int y)
                 checkinputsize = false;
                 bchoice = 9;
                 valuenxn = 0;
-                transl = false;
-                path.clear(); pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+                
+                path.clear(); pathofhamiltonpath.clear();
                 matrixx.clear();
                 matrixxx.clear();
                 b.clear();
                 call=false;scroll=0;
                 break;
-            }
+            }*/
         }
         else
         {
@@ -1447,10 +1374,12 @@ void handleKeyReleased(unsigned char key, int x, int y)
         tmpnn=0;resultofhamilton = false;
         matrixofhamilton.clear();
         path.clear();
-        pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        transl = false;
+        pathofhamiltonpath.clear();
         call =false;
         startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
+        Maze.clear();
+        number = 12;
+        pathss.clear();
         glutPostRedisplay();
     }
 }
@@ -1480,7 +1409,9 @@ void handleClick(int x, int y)
 {
     if (x >= -530 && x <= -270 && y <= 270 && y >= 230)
     {
-
+        Maze.clear();
+        number = 12;
+        pathss.clear();
         basemenu = true;
         input = false;
         resultofmin = false;resultofeuler=false;
@@ -1490,8 +1421,7 @@ void handleClick(int x, int y)
         valuenxn = 0;
         matrixofhamilton.clear();
         isindis = 0;
-        transl = false;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
+        path.clear();pathofhamiltonpath.clear();
         tmpnn=0;resultofhamilton = false;
         matrixx.clear();
         matrixxx.clear();
@@ -1528,22 +1458,13 @@ void handleClick(int x, int y)
     }
     if (x >= -600 && x <= -400 && y <= 220 && y >= 190)//case1
     {
-        resultofmin = false;resultofeuler=false;
-        resultofway = false;
-        resultofdijkstra = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
-        valuenxn = 0;
-        checkinputsize = false;
         basemenu = false;
         isindis = 1;
         bchoice = 1;
-        matrixofhamilton.clear();
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
         matrixx.clear();
         matrixxx.clear();
         b.clear();
-        transl = false;
+        
         call =false;
     }
     if (isindis == 2)
@@ -1575,19 +1496,10 @@ void handleClick(int x, int y)
     }
     if (x >= -600 && x <= -400 && y <= 170 && y >= 140)
     {
-        resultofmin = false;
-        resultofeuler=false;
-        resultofdijkstra = false;
-        resultofway = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
         valuenxn = 0;
         basemenu = false;
         checkinputsize = false;
         isindis = 2;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        transl = false;
-        matrixofhamilton.clear();
         matrixx.clear();
         matrixxx.clear();
         b.clear();
@@ -1597,41 +1509,33 @@ void handleClick(int x, int y)
     }
     if (x >= -600 && x <= -400 && y <= 120 && y >= 90)
     {
-        resultofmin = false;resultofeuler=false;
-        resultofway = false;
-        resultofdijkstra = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
+        resultofmin = false;
+              
+        startchoiceMinLength  = endchoiceMinLength = 0;
+        
         basemenu = false;
         isindis = 3;
         bchoice = 3;
-        transl = false;
+        
         input = true;
-        checkinputsize = false;
-        valuenxn = 0;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        matrixofhamilton.clear();
+        
         matrixx.clear();
         call =false;
         matrixxx.clear();
         b.clear();
+
     }
     if (x >= -600 && x <= -400 && y <= 70 && y >= 40)
     {
-        resultofmin = false;resultofeuler=false;
-        resultofdijkstra = false;
         resultofway = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
+        startchoiceLuuvet = endchoiceLuuvet  = 0;
+        
         basemenu = false;
         isindis = 4;
         bchoice = 4;
-        checkinputsize = false;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        transl = false;
+      
+        
         input = true;
-        valuenxn = 0;
-        matrixofhamilton.clear();
         matrixx.clear();
         call =false;
         matrixxx.clear();
@@ -1640,19 +1544,14 @@ void handleClick(int x, int y)
     if (x >= -600 && x <= -400 && y <= 20 && y >= -10)
     {
         input = true;
-        resultofmin = false;resultofeuler=false;
-        resultofway = false;
         resultofdijkstra = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
+        startchoicedijkstra = 0;
+        
         basemenu = false;
         isindis = 5;
-        checkinputsize = false;
+        
         bchoice = 5;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        transl = false;
-        valuenxn = 0;
-        matrixofhamilton.clear();
+        
         matrixx.clear();
         matrixxx.clear();
         call =false;
@@ -1661,19 +1560,10 @@ void handleClick(int x, int y)
     if (x >= -600 && x <= -400 && y <= -30 && y >= -60)
     {
         input = true;
-        resultofmin = false;resultofeuler=false;
-        resultofdijkstra = false;
-        resultofway = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
+        resultofeuler=false;
         basemenu = false;
         isindis = 6;
-        checkinputsize = false;
         bchoice = 6;
-        valuenxn = 0;
-        transl = false;
-        matrixofhamilton.clear();
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
         b = dmatrix;
         call =false;
         matrixx.clear();
@@ -1683,20 +1573,11 @@ void handleClick(int x, int y)
     if (x >= -600 && x <= -400 && y <= -80 && y >= -110)
     {
         input = true;
-        resultofmin = false;resultofeuler=false;
-        resultofdijkstra = false;
-        resultofway = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
+        resultofeuler=false;
         basemenu = false;
         isindis = 7;
-        checkinputsize = false;
         bchoice = 7;
         b = dmatrix;
-        transl = false;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        valuenxn = 0;
-        matrixofhamilton.clear();
         matrixx.clear();
         call =false;
         matrixxx.clear();
@@ -1704,44 +1585,30 @@ void handleClick(int x, int y)
     }
     if (x >= -600 && x <= -400 && y <= -130 && y >= -160)
     {
-        input = true;
-        resultofmin = false;resultofeuler=false;
-        resultofdijkstra = false;
-        resultofway = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
         basemenu = false;
         isindis = 8;
-        checkinputsize = false;
         bchoice = 8;
         valuenxn = 0;
-        matrixofhamilton = dmatrix;
-        transl = false;
-        path.clear();
-        pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        matrixx.clear();
-        matrixxx.clear();
-        call=false;scroll=0;
+        call=false;
         b.clear();
+        Maze.clear();
+        number = 12;
+        pathss.clear();
+        //movi.clear();
     }
     if (x >= -600 && x <= -400 && y <= -180 && y >= -210)
     {
         input = true;
-        resultofmin = false;resultofeuler=false;
-        resultofway = false;
-        resultofdijkstra = false;
-        startchoiceMinLength = startchoiceLuuvet = endchoiceMinLength = endchoiceLuuvet = startchoicedijkstra = 0;
-        tmpnn=0;resultofhamilton = false;
+        
+        tmpnn=0;
+        resultofhamilton = false;
         basemenu = false;
         isindis = 9;
         checkinputsize = false;
         bchoice = 9;
-        valuenxn = 0;
-        transl = false;
         matrixofhamilton = dmatrix;
-        path.clear();pathofhamiltoncycle.clear();pathofhamiltonpath.clear();
-        matrixx.clear();
-        matrixxx.clear();
+        path.clear();
+        pathofhamiltonpath.clear();
         b.clear();
         call =false;
         scroll = 0;

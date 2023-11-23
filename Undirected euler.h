@@ -2,7 +2,6 @@
 #include<vector>
 using namespace std;
 vector<vector<int>>b;
-bool transl = false;
 vector<int> path;
 bool resultofeuler = false;
 int totaledge = 0;

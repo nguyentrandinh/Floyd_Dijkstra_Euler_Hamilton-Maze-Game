@@ -46,7 +46,7 @@ queue<int> Truyvet(int u,int v)
 {
     queue<int> Way;
     int tmp=u;
-    if (Luuvetpath[u][v]!=0)
+    if (Luuvetpath[u-1][v-1]!=0)
     {
         while (tmp != v)
         {
@@ -73,12 +73,15 @@ void FloydWarshall(const vector<vector<int>>& graph)
     vector<vector<int>> Length(n, vector<int>(n, INF));
     vector<vector<int>> Luuvett(n, vector<int>(n, INF));
     // Khởi tạo ma trận khoảng cách ban đầu
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+        {
             Length[i][j] = graph[i][j];
             if (Length[i][j] != 0 && Length[i][j] != INF)
                 Luuvett[i][j] = j + 1;
-            else Luuvett[i][j] = 0;
+            else
+                Luuvett[i][j] = 0;
             if (Length[i][j] == 0 && i != j)
                 Length[i][j] = INF;
         }
